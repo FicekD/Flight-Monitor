@@ -5,14 +5,15 @@ from curl_cffi import requests
 
 
 class WizzAirScrapper:
-    def __init__(self) -> None:
+    def __init__(self, adults: int=2) -> None:
+        self.adults = adults
         session = requests.Session(impersonate='chrome', proxy=os.getenv('stickyproxy'))
         resp = session.get('https://www.wizzair.com/buildnumber')
         self.api_version = resp.text.split('/')[-1]
 
     def get_price(self, departure_station: str, arrival_station: str, date: str) -> float | None:
         data = {
-            'adultCount': 2,
+            'adultCount': self.adults,
             'childCount': 0,
             'dayInterval': 7,
             'flightList':[
