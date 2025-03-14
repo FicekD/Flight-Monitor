@@ -1,4 +1,5 @@
 import os
+import argparse
 
 import pandas as pd
 
@@ -17,6 +18,14 @@ from utils import load_monitored_flights, load_price_history, save_price
 if __name__ == '__main__':
     os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--adults', default=2, help='number of adult passangers')
+    parser.add_argument('--flights_file', default='data/monitored_flights.json', help='json file: list of flight dicts [\{"departure": "DDD", "arrival": "AAA", "date": "YYYY-MM-DD", "agency": "<agency>"\}, ...]')
+    parser.add_argument('--data_file', default='data/price_history.csv', help='csv filepath to save and load saved data if already exists')
+
+    args = parser.parse_args()
+    adults, flights_file, data_file = args.adults, args.flights_file, args.data_file
+
     scrappers = {
         'wizzair': WizzAirScrapper(),
         'ryanair': RyanAirScrapper()
@@ -24,9 +33,9 @@ if __name__ == '__main__':
 
     load_figure_template(['journal'])
 
-    flights = load_monitored_flights()
+    flights = load_monitored_flights(flights_file)
 
-    initial_df = load_price_history()
+    initial_df = load_price_history(data_file)
     initial_df['Timestamp'] = pd.to_datetime(initial_df['Timestamp'])
     figs = {}
     for pid, info in flights.items():
@@ -71,7 +80,7 @@ if __name__ == '__main__':
             except NotImplementedError:
                 print(f'Agency {info["agency"]} not implemented')
 
-        df = save_price(prices)
+        df = save_price(prices, data_file)
         df['Timestamp'] = pd.to_datetime(df['Timestamp'])
         figs = []
         for pid in flights.keys():
