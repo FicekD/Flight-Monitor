@@ -3,6 +3,8 @@ import json
 
 from curl_cffi import requests
 
+from .utils import InvalidFLightException
+
 
 class WizzAirScrapper:
     def __init__(self, adults: int=2) -> None:
@@ -15,7 +17,7 @@ class WizzAirScrapper:
         data = {
             'adultCount': self.adults,
             'childCount': 0,
-            'dayInterval': 7,
+            'dayInterval': 3,
             'flightList':[
                 {'departureStation': departure_station.upper(), 'arrivalStation': arrival_station.upper(), 'date': date}
             ],
@@ -33,7 +35,11 @@ class WizzAirScrapper:
 
         price = None
         for item in resp_data['outboundFlights']:
-            if item['date'] == target_date:
+            if item['date'] == target_date and item['priceType'] != 'noData':
                 price = float(item['price']['amount'])
                 break
+        
+        if price is None:
+            raise InvalidFLightException()
+        
         return price

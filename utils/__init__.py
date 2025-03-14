@@ -9,7 +9,7 @@ import pandas as pd
 def load_monitored_flights(path: str) -> dict:
     with open(path, 'rt') as file:
         data = json.load(file)
-    flight_dict = {f'{flight["agency"].capitalize()}: {flight["departure"].upper()}-{flight["arrival"].upper()}': flight for flight in data}
+    flight_dict = {f'{flight["agency"].capitalize()}: {flight["departure"].upper()}-{flight["arrival"].upper()} on {flight["date"]}': flight for flight in data}
     return flight_dict
 
 

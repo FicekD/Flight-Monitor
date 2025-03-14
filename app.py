@@ -1,7 +1,10 @@
 import os
 import argparse
 
+import curl_cffi.requests
+import curl_cffi.requests.exceptions
 import pandas as pd
+import curl_cffi
 
 import dash
 from dash import dcc, html
@@ -11,7 +14,7 @@ import dash_bootstrap_components
 
 import plotly.express as px
 
-from scrapping import WizzAirScrapper, RyanAirScrapper
+from scrapping import InvalidFLightException, WizzAirScrapper, RyanAirScrapper
 from utils import load_monitored_flights, load_price_history, save_price
 
 
@@ -78,6 +81,10 @@ if __name__ == '__main__':
                 prices[pid] = scrappers[info['agency'].lower()].get_price(info['departure'], info['arrival'], info['date'])
             except NotImplementedError:
                 print(f'Agency {info["agency"]} not implemented')
+            except curl_cffi.requests.exceptions.HTTPError as e:
+                print(f'Error during scrapping {pid}: {e}')
+            except InvalidFLightException:
+                print(f'Flight {pid} on {info["date"]} not found')
 
         df = save_price(prices, data_file)
         df['Timestamp'] = pd.to_datetime(df['Timestamp'])

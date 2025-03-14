@@ -3,6 +3,8 @@ import os
 
 from curl_cffi import requests
 
+from .utils import InvalidFLightException
+
 
 class RyanAirScrapper:
     def __init__(self, adults: int=2) -> None:
@@ -26,4 +28,8 @@ class RyanAirScrapper:
                 assert len(item['flights']) == 1 and len(item['flights'][0]['regularFare']['fares']) == 1
                 price = float(item['flights'][0]['regularFare']['fares'][0]['amount'])
                 break
+        
+        if price is None:
+            raise InvalidFLightException()
+        
         return price
