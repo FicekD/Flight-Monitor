@@ -69,8 +69,7 @@ if __name__ == '__main__':
 
     @app.callback(
         [Output(f'price-graph-{pid}', 'figure') for pid in flights],
-        [Input('interval-component', 'n_intervals'), Input('update-button', 'n_clicks')],
-        prevent_initial_call=True
+        [Input('interval-component', 'n_intervals'), Input('update-button', 'n_clicks')]
     )
     def update_prices(n_intervals: int | None, n_clicks: int | None) -> list:
         prices = {}
