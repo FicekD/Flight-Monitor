@@ -18,7 +18,6 @@ Firstly create a `.json` file, that contains the flights you want to monitor, su
 		"date": "2025-07-18",
 		"agency": "wizzair"
 	},
-    ...
 ]
 ```
 The departure and arrival strings are airport codes, date should be in format "YYYY-MM-DD".
