@@ -32,6 +32,7 @@ def save_price(prices: dict, path: str) -> pd.DataFrame:
     for _, gdf in grouped:
         prices = np.array(gdf['Price'], dtype=np.float32)
         if len(prices) < 3:
+            sub_dfs.append(gdf)
             continue
         mask = np.logical_not((prices[:-2] == prices[1:-1]) * (prices[2:] == prices[1:-1]))
         mask = np.pad(mask, 1, mode='constant', constant_values=True)
